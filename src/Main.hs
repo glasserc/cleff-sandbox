@@ -1,6 +1,3 @@
-import Cleff
-import Cleff.Input
-import Cleff.Output
-import Cleff.State
+import Effects.Teletype
 
 main = pure ()
