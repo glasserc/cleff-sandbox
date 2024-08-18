@@ -1,4 +1,8 @@
 module Main (main) where
 
+import Effects.InteractSpec qualified as InteractSpec
+import Test.Hspec
+
 main :: IO ()
-main = pure ()
+main = hspec $ do
+  InteractSpec.spec
