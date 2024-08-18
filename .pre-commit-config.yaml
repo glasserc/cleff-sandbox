@@ -1,0 +1,11 @@
+repos:
+  - repo: local
+    hooks:
+      - id: fourmolu
+        name: fourmolu
+        entry: fourmolu
+        args:
+          - --mode
+          - inplace
+        language: system
+        types: [haskell]
