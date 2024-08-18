@@ -37,6 +37,7 @@ library
     TypeOperators
     DataKinds
     FlexibleContexts
+    ImportQualifiedPost
   ghc-options:         -Wall
                        -Wcompat
                        -Widentities
@@ -81,3 +82,4 @@ test-suite effects-sandbox-test
     TypeOperators
     DataKinds
     FlexibleContexts
+    ImportQualifiedPost
