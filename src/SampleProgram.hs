@@ -1,6 +1,7 @@
+module SampleProgram where
+
 import Cleff
 import Effects.Interact
-import Effects.Teletype
 
 chat :: (Interact :> es) => Eff es ()
 chat = do
@@ -18,10 +19,3 @@ chat = do
         then display "Wow! Those tech salaries are really something!"
         else display "Well, maybe one day after the IPO!"
   display $ "It was nice talking to you, " ++ name ++ ". Hope you enjoy your trip!"
-
-main :: IO ()
-main =
-  runIOE
-    . runTeletypeIO
-    . runInteractTeletype
-    $ chat
