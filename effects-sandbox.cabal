@@ -30,6 +30,7 @@ library
     DisambiguateRecordFields
     OverloadedLabels
     OverloadedRecordDot
+    RecordWildCards
     LambdaCase
     BlockArguments
     GADTs
@@ -59,6 +60,7 @@ test-suite effects-sandbox-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules: Effects.InteractSpec
+                 SampleProgramSpec
   hs-source-dirs:
       test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
