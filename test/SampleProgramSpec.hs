@@ -1,7 +1,8 @@
 module SampleProgramSpec where
 
-import Cleff (runIOE)
-import Data.IORef
+import Cleff (runPure)
+import Cleff.Output (outputToListState)
+import Cleff.State (runState)
 import Data.List (isInfixOf)
 import Effects.Interact
 import SampleProgram
@@ -10,22 +11,20 @@ import Test.Hspec
 spec :: Spec
 spec = describe "chat" $ do
   it "works" $ do
-    messagesRef <- newIORef []
-    talker <- newTalker \nextText nextYesNo s -> do
-      modifyIORef messagesRef (s :)
-      case s of
-        _
-          | "name" `isInfixOf` s ->
-              writeIORef nextText "Ethan"
-        _
-          | "airplanes" `isInfixOf` s ->
-              writeIORef nextYesNo True
-        _
-          | "first class" `isInfixOf` s ->
-              writeIORef nextYesNo False
-        _ -> pure ()
-    runIOE $ runInteractTalker talker chat
-    messages <- readIORef messagesRef
+    let talker =
+          Talker
+            { respondText = \_ -> "Ethan"
+            , respondYesNo = \s -> case s of
+                _
+                  | "airplanes" `isInfixOf` s ->
+                      True
+                _
+                  | "first class" `isInfixOf` s ->
+                      False
+                _ -> False
+            }
+    let (_, messages) =
+          runPure . runState [] . outputToListState $ runInteractTalker talker chat
     reverse messages
       `shouldBe` [ "What's your name?"
                  , "Nice to meet you, Ethan!"

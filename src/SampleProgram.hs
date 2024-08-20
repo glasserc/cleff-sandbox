@@ -5,16 +5,13 @@ import Effects.Interact
 
 chat :: (Interact :> es) => Eff es ()
 chat = do
-  display "What's your name?"
-  name <- inputText
+  name <- promptText "What's your name?"
   display $ "Nice to meet you, " ++ name ++ "!"
-  display "Do you like airplanes?"
-  plane <- yesOrNo
+  plane <- promptYesOrNo "Do you like airplanes?"
   if not plane
     then display "Me either! Personally, I don't mind takeoffs -- it's the landings that scare me!"
     else do
-      display "Do you fly first class?"
-      rich <- yesOrNo
+      rich <- promptYesOrNo "Do you fly first class?"
       if rich
         then display "Wow! Those tech salaries are really something!"
         else display "Well, maybe one day after the IPO!"
