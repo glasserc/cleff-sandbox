@@ -1,7 +1,7 @@
 module SampleProgramSpec where
 
-import Cleff (runPure)
-import Cleff.Output (outputToListState)
+import Cleff (Eff, runPure)
+import Cleff.Output (Output, ignoreOutput, outputToListState)
 import Cleff.State (runState)
 import Data.List (isInfixOf)
 import Data.Set qualified as Set
@@ -26,10 +26,10 @@ ethan =
 
 spec :: Spec
 spec = describe "chat" $ do
-  it "works" $ do
-    let ((_, users), messages) =
+  it "interacts properly" $ do
+    let (_, messages) =
           runPure . runState [] . outputToListState $
-            runUserStorePure mempty $
+            runUserStorePureDiscardResult mempty $
               runInteractTalker ethan chat
     reverse messages
       `shouldBe` [ "What's your name?"
@@ -39,5 +39,10 @@ spec = describe "chat" $ do
                  , "Well, maybe one day after the IPO!"
                  , "It was nice talking to you, Ethan. Hope you enjoy your trip!"
                  ]
+  it "stores new users" $ do
+    let (_, users) =
+          runPure . (ignoreOutput :: Eff (Output String : es) a -> Eff es a) $
+            runUserStorePure mempty $
+              runInteractTalker ethan chat
     Set.toList users
       `shouldBe` [UserRecord {name = "Ethan", flies = True, rich = False}]
