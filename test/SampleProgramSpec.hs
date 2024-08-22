@@ -24,6 +24,9 @@ ethan =
         _ -> False
     }
 
+ethanRecord :: UserRecord
+ethanRecord = UserRecord {name = "Ethan", flies = True, rich = False}
+
 spec :: Spec
 spec = describe "chat" $ do
   it "interacts properly" $ do
@@ -45,4 +48,4 @@ spec = describe "chat" $ do
             runUserStorePure mempty $
               runInteractTalker ethan chat
     Set.toList users
-      `shouldBe` [UserRecord {name = "Ethan", flies = True, rich = False}]
+      `shouldBe` [ethanRecord]
