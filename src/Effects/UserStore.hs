@@ -32,3 +32,9 @@ runUserStorePure initialUsers =
     StoreUser user -> do
       users <- get
       put $ Set.insert user $ Set.filter (\u -> u.name /= user.name) users
+
+-- | Handle the UserStore action but we don't care about any users
+-- stored so just throw them away.
+-- Ideas for better names solicited.
+runUserStorePureDiscardResult :: Set UserRecord -> Eff (UserStore : es) a -> Eff es a
+runUserStorePureDiscardResult initialUsers = fmap fst . runUserStorePure initialUsers

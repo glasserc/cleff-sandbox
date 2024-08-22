@@ -2,8 +2,9 @@ module SampleProgram where
 
 import Cleff
 import Effects.Interact
+import Effects.UserStore
 
-chat :: (Interact :> es) => Eff es ()
+chat :: ([Interact, UserStore] :>> es) => Eff es ()
 chat = do
   name <- promptText "What's your name?"
   display $ "Nice to meet you, " ++ name ++ "!"

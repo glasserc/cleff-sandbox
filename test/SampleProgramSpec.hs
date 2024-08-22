@@ -5,6 +5,7 @@ import Cleff.Output (outputToListState)
 import Cleff.State (runState)
 import Data.List (isInfixOf)
 import Effects.Interact
+import Effects.UserStore
 import SampleProgram
 import Test.Hspec
 
@@ -24,7 +25,9 @@ spec = describe "chat" $ do
                 _ -> False
             }
     let (_, messages) =
-          runPure . runState [] . outputToListState $ runInteractTalker talker chat
+          runPure . runState [] . outputToListState $
+            runUserStorePureDiscardResult mempty $
+              runInteractTalker talker chat
     reverse messages
       `shouldBe` [ "What's your name?"
                  , "Nice to meet you, Ethan!"
