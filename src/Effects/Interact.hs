@@ -39,8 +39,8 @@ data Talker = Talker
   , respondYesNo :: String -> Bool
   }
 
-runInteractTalker :: (Output String :> es) => Talker -> Eff (Interact : es) a -> Eff es a
-runInteractTalker talker = interpret \case
+runInteractTalker :: Talker -> Eff (Interact : es) a -> Eff (Output String : es) a
+runInteractTalker talker = reinterpret \case
   PromptText s -> output s >> pure (talker.respondText s)
   PromptYesOrNo s -> output s >> pure (talker.respondYesNo s)
   Display s -> output s

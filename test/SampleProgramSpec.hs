@@ -31,9 +31,10 @@ spec :: Spec
 spec = describe "chat" $ do
   it "interacts properly" $ do
     let (_, messages) =
-          runPure . runState [] . outputToListState $
-            runUserStorePureDiscardResult mempty $
-              runInteractTalker ethan chat
+          runPure
+            . runUserStorePureDiscardResult mempty
+            $ runState [] . outputToListState
+            $ runInteractTalker ethan chat
     reverse messages
       `shouldBe` [ "What's your name?"
                  , "Nice to meet you, Ethan!"
@@ -44,16 +45,18 @@ spec = describe "chat" $ do
                  ]
   it "stores new users" $ do
     let (_, users) =
-          runPure . (ignoreOutput :: Eff (Output String : es) a -> Eff es a) $
-            runUserStorePure mempty $
-              runInteractTalker ethan chat
+          runPure
+            . runUserStorePure mempty
+            $ (ignoreOutput :: Eff (Output String : es) a -> Eff es a)
+            $ runInteractTalker ethan chat
     Set.toList users
       `shouldBe` [ethanRecord]
   it "talks correctly to old users" $ do
     let (_, messages) =
-          runPure . runState [] . outputToListState $
-            runUserStorePureDiscardResult (Set.singleton ethanRecord) $
-              runInteractTalker ethan chat
+          runPure
+            . runUserStorePureDiscardResult (Set.singleton ethanRecord)
+            $ runState [] . outputToListState
+            $ runInteractTalker ethan chat
     reverse messages
       `shouldBe` [ "What's your name?"
                  , "Good to see you again, Ethan!"
@@ -73,9 +76,10 @@ spec = describe "chat" $ do
             }
     it "talks correctly" $ do
       let (_, messages) =
-            runPure . runState [] . outputToListState $
-              runUserStorePureDiscardResult (Set.singleton ethanRecord) $
-                runInteractTalker newTalker chat
+            runPure
+              . runUserStorePureDiscardResult (Set.singleton ethanRecord)
+              $ runState [] . outputToListState
+              $ runInteractTalker newTalker chat
       reverse messages
         `shouldBe` [ "What's your name?"
                    , "Good to see you again, Ethan!"
@@ -87,8 +91,9 @@ spec = describe "chat" $ do
                    ]
     it "updates user store" $ do
       let (_, users) =
-            runPure . (ignoreOutput :: Eff (Output String : es) a -> Eff es a) $
-              runUserStorePure mempty $
-                runInteractTalker newTalker chat
+            runPure
+              . runUserStorePure mempty
+              $ (ignoreOutput :: Eff (Output String : es) a -> Eff es a)
+              $ runInteractTalker newTalker chat
       Set.toList users
         `shouldBe` [ethanRecord {rich = True}]
