@@ -10,25 +10,27 @@ import Effects.UserStore
 import SampleProgram
 import Test.Hspec
 
+ethan :: Talker
+ethan =
+  Talker
+    { respondText = \_ -> "Ethan"
+    , respondYesNo = \s -> case s of
+        _
+          | "airplanes" `isInfixOf` s ->
+              True
+        _
+          | "first class" `isInfixOf` s ->
+              False
+        _ -> False
+    }
+
 spec :: Spec
 spec = describe "chat" $ do
   it "works" $ do
-    let talker =
-          Talker
-            { respondText = \_ -> "Ethan"
-            , respondYesNo = \s -> case s of
-                _
-                  | "airplanes" `isInfixOf` s ->
-                      True
-                _
-                  | "first class" `isInfixOf` s ->
-                      False
-                _ -> False
-            }
     let ((_, users), messages) =
           runPure . runState [] . outputToListState $
             runUserStorePure mempty $
-              runInteractTalker talker chat
+              runInteractTalker ethan chat
     reverse messages
       `shouldBe` [ "What's your name?"
                  , "Nice to meet you, Ethan!"
