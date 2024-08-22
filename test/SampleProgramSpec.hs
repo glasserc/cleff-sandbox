@@ -47,7 +47,7 @@ spec = describe "chat" $ do
     let (_, users) =
           runPure
             . runUserStorePure mempty
-            $ (ignoreOutput :: Eff (Output String : es) a -> Eff es a)
+            $ ignoreOutput
             $ runInteractTalker ethan chat
     Set.toList users
       `shouldBe` [ethanRecord]
@@ -93,7 +93,7 @@ spec = describe "chat" $ do
       let (_, users) =
             runPure
               . runUserStorePure mempty
-              $ (ignoreOutput :: Eff (Output String : es) a -> Eff es a)
+              $ ignoreOutput
               $ runInteractTalker newTalker chat
       Set.toList users
         `shouldBe` [ethanRecord {rich = True}]
