@@ -4,6 +4,7 @@ import Cleff (runPure)
 import Cleff.Output (outputToListState)
 import Cleff.State (runState)
 import Data.List (isInfixOf)
+import Data.Set qualified as Set
 import Effects.Interact
 import Effects.UserStore
 import SampleProgram
@@ -24,9 +25,9 @@ spec = describe "chat" $ do
                       False
                 _ -> False
             }
-    let (_, messages) =
+    let ((_, users), messages) =
           runPure . runState [] . outputToListState $
-            runUserStorePureDiscardResult mempty $
+            runUserStorePure mempty $
               runInteractTalker talker chat
     reverse messages
       `shouldBe` [ "What's your name?"
@@ -36,3 +37,5 @@ spec = describe "chat" $ do
                  , "Well, maybe one day after the IPO!"
                  , "It was nice talking to you, Ethan. Hope you enjoy your trip!"
                  ]
+    Set.toList users
+      `shouldBe` [UserRecord {name = "Ethan", flies = True, rich = False}]

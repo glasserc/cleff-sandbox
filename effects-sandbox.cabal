@@ -69,6 +69,7 @@ test-suite effects-sandbox-test
   build-depends:
       base >=4.7 && <5
     , cleff
+    , containers
     , effects-sandbox
     , hspec
   default-language: Haskell2010
