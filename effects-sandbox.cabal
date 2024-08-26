@@ -57,6 +57,10 @@ executable effects-sandbox-exe
                , cleff
                , effects-sandbox
   hs-source-dirs: app
+  default-extensions:
+    DataKinds
+    FlexibleContexts
+    TypeOperators
 
 test-suite effects-sandbox-test
   type: exitcode-stdio-1.0
