@@ -22,11 +22,12 @@ runTeletypeIO = interpretIO \case
   WriteTTY s -> putStrLn s
 
 -- Effect interpretation via other pure effects
-runTeletypePure :: [String] -> Eff (Teletype : es) a -> Eff es [String]
+runTeletypePure :: [String] -> Eff (Teletype : es) a -> Eff es (a, [String])
 runTeletypePure tty =
-  fmap (reverse . snd)
+  fmap (\(a, outputs) -> (a, reverse outputs))
     . runState []
     . outputToListState
+    . fmap fst -- discard inputs; it's just `tty`
     . runState tty
     . inputToListState
     . reinterpret2 \case

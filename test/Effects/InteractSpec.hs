@@ -12,22 +12,22 @@ spec = describe "readUntilYesOrNo" do
           [ "nop"
           , "yes"
           ]
-        yesOrNoAndPrint = readUntilYesOrNo >>= writeTTY . show
-        outputs = runPure $ runTeletypePure inputs yesOrNoAndPrint
+        (val, outputs) = runPure $ runTeletypePure inputs readUntilYesOrNo
     outputs
       `shouldBe` [ "Please enter a response (yes or no):"
                  , "I'm sorry, I didn't understand your response."
                  , "Please enter a response (yes or no):"
-                 , "True"
                  ]
+    val
+      `shouldBe` True
   it "understands no" do
     let inputs =
           [ "no"
           , "yes"
           ]
-        yesOrNoAndPrint = readUntilYesOrNo >>= writeTTY . show
-        outputs = runPure $ runTeletypePure inputs yesOrNoAndPrint
+        (val, outputs) = runPure $ runTeletypePure inputs readUntilYesOrNo
     outputs
       `shouldBe` [ "Please enter a response (yes or no):"
-                 , "False"
                  ]
+    val
+      `shouldBe` False
