@@ -56,31 +56,53 @@ of using `cleff` and should be considered carefully.
 
 # Should effects "stack"?
 
-Let's say you have a third-party API that you use to implement some
-contract for your application. As an example, let's take Auth0, which
-you make requests to over HTTP, and which you hope to use as your
-authentication provider, which in the context of your application is
-reified as some subsystem that manages users. What kinds of effects
-should you have and how should they relate?
+Let's say you are building some feature, let's call it Feature X. That
+feature is going to work with a concept of users and has some kind of
+contract about what user operations need to be available. Your company
+also has a third-party API which you want to use to implement that
+contract. As an example, let's take Auth0, which you make requests to
+over HTTP. What kinds of effects should you have and how should they
+relate?
 
-It seems reasonable to have an effect for HTTP, representing the
-ability to make requests and receive responses from any third party
-API. You may want to define an Auth0 effect, which represents a
-higher-level concept, the ability to make Auth0 requests and receive
-Auth0 responses. Finally, you almost certainly want some kind of
-`UserStore` effect that represents the contract that your application
-actually needs.
+In general, there's no one correct answer. Each effect could be useful
+and help make code above it more testable. On the other hand, if you
+only have one interpretation and one consumer, then there isn't much
+point in introducing an effect -- you could just hardcode the function
+call and save yourself some trouble.
 
-The implementation of `UserStore` may depend on your Auth0 effect, and
-the implementation of the `Auth0` effect may depend on your HTTP
-effect, but from the perspective of some feature that involves users,
-these are just implementation details.
+The most obvious effect that you might want is one that represents
+your concept of users, let's call it `UserStore`. This reifies the
+contract that your application actually needs, and lets you isolate
+your feature from its dependencies. You'll want a different
+implementation of this for tests.
 
-Having an Auth0 effect may be helpful if you want to test your
-`UserStore` implementation and don't want to break it down all the way
-to HTTP requests/responses. But since your application only cares
-about access to the `UserStore`, this is an implementation choice that
-can be decided by your `UserStore` implementation.
+Your production implementation of `UserStore` could be in IO. The IO
+actions you produce at this level could involve contacting Auth0 via
+HTTP or any other mechanism, but that doesn't necessarily mean that
+you need an effect to represent it. If your code to call Auth0 is
+sufficiently declarative or easy to break into pure, testable pieces,
+this could be enough.
+
+On the other hand, if you want to write tests for your `UserStore`
+implementation, you might consider defining an effect for HTTP,
+representing the ability to make requests and receive responses from
+any third party API. Having this effect would make it possible to test
+your implementation of the `UserStore` effect by examining the HTTP
+calls it makes or how it handles the HTTP responses it gets. But if
+your HTTP abstraction is good, you may not need this.
+
+What about an `Auth0` effect? This could serve as a helpful middle
+point between your `UserStore` implementation and the `Http` effect it
+may depend on. On the other hand, unless there are other callers who
+might use your `Auth0` effect, it may be a pointless abstraction.
+
+Whether to use or invent `Http` or `Auth0` as effects here ends up
+being an implementation detail, and thus architectural decision, of
+the `UserStore` implementation. The implementation of `UserStore` may
+depend on your Auth0 effect, and the implementation of the `Auth0`
+effect may depend on your HTTP effect, but from the perspective of
+some feature that involves users, these are just implementation
+details.
 
 # What makes a good effect?
 
