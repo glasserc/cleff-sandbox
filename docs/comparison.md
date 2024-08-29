@@ -102,15 +102,20 @@ logsOutput <- takeMVar logsMVar
 -- Assert properties of logsOutput...
 ```
 
-One unfortunate property of stubs implemented this way is that a lot
-of code will use the `MyAppM` type, and the `MyAppM` type depends on
-`Stubs`, which depends on a variety of different types that are used
-from different stubbable functions. This introduces choke points in
-your module compilation graph, which can be a problem in larger
-projects -- changing an innocuous-looking type can force recompilation
-of lots of things that just happen to mention `MyAppM` somewhere, and
-if you want to load a module in the REPL, it may take some time to
-load all the dependencies.
+One unfortunate property of stubs implemented this way is stubs are
+available even in your real production code, rather than isolated to
+testing code. Someone would probably catch it in code review if you
+tried to provide a stub in production, but it's still kind of unclean
+architecturally.
+
+Another problem is that a lot of code will use the `MyAppM` type, and
+the `MyAppM` type depends on `Stubs`, which depends on a variety of
+different types that are used from different stubbable functions. This
+introduces choke points in your module compilation graph, which can be
+a problem in larger projects -- changing an innocuous-looking type can
+force recompilation of lots of things that just happen to mention
+`MyAppM` somewhere, and if you want to load a module in the REPL, it
+may take some time to load all the dependencies.
 
 To get around this problem, someone at work introduced "dynamic" type
 stubs, which use some pretty fancy type machinery and dynamic
