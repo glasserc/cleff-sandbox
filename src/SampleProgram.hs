@@ -1,10 +1,11 @@
 module SampleProgram where
 
 import Cleff
-import Effects.Interact
-import Effects.UserStore
+import Constraints.Interact
+import Constraints.UserStore
+import Effects.UserStore (UserRecord (..))
 
-chat :: ([Interact, UserStore] :>> es) => Eff es ()
+chat :: (HasInteract m, HasUserStore m) => m ()
 chat = do
   name <- promptText "What's your name?"
   userM <- lookupUserByName name
@@ -17,7 +18,7 @@ chat = do
       storeUser inputUser
   display $ "It was nice talking to you, " ++ name ++ ". Hope you enjoy your trip!"
 
-readUserFromInteract :: (Interact :> es) => String -> Eff es UserRecord
+readUserFromInteract :: (HasInteract m) => String -> m UserRecord
 readUserFromInteract name = do
   display $ "Nice to meet you, " ++ name ++ "!"
   plane <- promptYesOrNo "Do you like airplanes?"
@@ -34,7 +35,7 @@ readUserFromInteract name = do
       pure UserRecord {name = name, flies = plane, rich = rich}
 
 -- | Verify that all the same information is still true about the user.
-refreshUserFromInteract :: (Interact :> es) => UserRecord -> Eff es UserRecord
+refreshUserFromInteract :: (HasInteract m) => UserRecord -> m UserRecord
 refreshUserFromInteract userRecord = do
   display $ "Good to see you again, " ++ userRecord.name ++ "!"
   let airplanePrompt = case userRecord.flies of
@@ -54,7 +55,7 @@ refreshUserFromInteract userRecord = do
       respondToRefreshedData userRecord.rich rich
       pure userRecord {flies = plane, rich = rich}
 
-respondToRefreshedData :: (Eq a, Interact :> es) => a -> a -> Eff es ()
+respondToRefreshedData :: (Eq a, HasInteract m) => a -> a -> m ()
 respondToRefreshedData old new =
   if old == new
     then display "Thanks for confirming!"
