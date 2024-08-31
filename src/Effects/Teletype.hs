@@ -7,6 +7,7 @@ import Cleff.Input
 import Cleff.Output
 import Cleff.State
 import Data.Maybe (fromMaybe)
+import Effects.Logging qualified as Log
 
 -- Effect definition
 data Teletype :: Effect where
@@ -53,3 +54,13 @@ runTeletypePure tty =
       fmap (\(a, outputs) -> (a, reverse outputs))
         . runState []
         . outputToListState
+
+logAllTeletype :: (Log.Logging :> es) => Eff (Teletype : es) a -> Eff (Teletype : es) a
+logAllTeletype = interpose \case
+  ReadTTY -> do
+    s <- readTTY
+    Log.log $ "read from TTY: " ++ s
+    pure s
+  WriteTTY s -> do
+    Log.log $ "write to TTY: " ++ s
+    writeTTY s
