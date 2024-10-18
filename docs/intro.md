@@ -26,24 +26,24 @@ longer in `IO`. Instead, they are in some monadic type which makes it
 explicit which effects are being used. `cleff` provides some built-in
 effects which do simple, foundational things like "return additional
 side-channel information". You can define additional effects -- some
-examples might be "have access to some settings" or "make HTTP
-requests". With `cleff`, this might be expressed using a type
-signature like `Eff '[GetSettings, Http] SomeResult`[*], where
-`GetSettings` and `Http` might be effects that we have designed.
+examples might be "have access to some settings" or "store User
+records". With `cleff`, this might be expressed using a type signature
+like `Eff '[GetSettings, StoreUser] SomeResult`[*], where `GetSettings` and
+`StoreUser` might be effects that we have designed.
 
 [*] You will instead typically see a type signature that looks more
-like `(GetSettings :> es, Http :> es) => Eff es SomeResult`, meaning
+like `(GetSettings :> es, StoreUser :> es) => Eff es SomeResult`, meaning
 "this thing works with any set of effects that has _at least_
-`GetSettings` and `Http`. This makes it easier to compose actions that
+`GetSettings` and `StoreUser`. This makes it easier to compose actions that
 use different sets of effects, since the effects can just be added
 together.
 
 So then you have such an action that uses a bunch of effects. We then
 are able to "interpret" the effects in different ways. For example, we
-might have an implementation of the `Http` effect that we use in
-production, which actually makes HTTP requests over the network, but
-in testing we might use prerecorded HTTP responses. `cleff` gives us
-lots of tools to provide implementations of effects. Each
+might have an implementation of the `StoreUser` effect that we use in
+production, which actually writes to a database, but in testing we
+might simply capture the stored users and examine them later. `cleff`
+gives us lots of tools to provide implementations of effects. Each
 implementation removes an effect from the action until you get to
 either no effects (in which case you have a pure computation) or just
 the IO effect (in which case you can convert to an `IO` action, say to
