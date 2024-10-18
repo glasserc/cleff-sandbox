@@ -4,7 +4,7 @@ import Cleff
 import Effects.Interact
 import Effects.UserStore
 
-chat :: ([Interact, UserStore] :>> es) => Eff es ()
+chat :: ('[Interact, UserStore] :>> es) => Eff es ()
 chat = do
   name <- promptText "What's your name?"
   userM <- lookupUserByName name

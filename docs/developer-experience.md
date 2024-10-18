@@ -118,7 +118,7 @@ I also tried adding an extraneous constraint to the program. When I tried
 This also makes sense and seems reasonable to me.
 
 On the other hand, when I used `:>>`, as in `refreshUserFromInteract
-:: ([UserStore, Interact] :>> es) => UserRecord -> Eff es UserRecord`,
+:: ('[UserStore, Interact] :>> es) => UserRecord -> Eff es UserRecord`,
 GHC didn't complain about this at all. This seems suboptimal. In this
 case, GHC identifies that the constraint is being "used", but it's too
 wide, and GHC is not able to detect that.
@@ -332,7 +332,7 @@ main :: IO ()
 main =
   runIOE
     . runUserStorePureDiscardResult mempty
-    $ chat --    chat has type Eff [Interact, UserStore, IOE] ()
+    $ chat --    chat has type Eff '[Interact, UserStore, IOE] ()
 ```
 
 ```
@@ -344,7 +344,7 @@ main =
       In an equation for ‘main’:
           main = runIOE . runUserStorePureDiscardResult mempty $ chat
    |
-11 |     $ chat --    chat has type Eff [Interact, UserStore, IOE] ()
+11 |     $ chat --    chat has type Eff '[Interact, UserStore, IOE] ()
    |       ^^^^
 ```
 
@@ -352,7 +352,7 @@ This might be a little confusing, since actually the constraint (as
 shown on `chat`) actually does include `Interact`. What's happening
 here is that GHC is inferring types "from the ground up", using
 `runIOE` and `runUserStorePureDiscardResult` to end up with the type
-`Eff [UserStore, IOE] ()`, and that isn't compatible with `chat`. This
+`Eff '[UserStore, IOE] ()`, and that isn't compatible with `chat`. This
 type error is actually something `cleff` [explicitly
 provides](https://github.com/re-xyr/cleff/blob/c71c09c8c77c804c9fe206a4704546d4140c8f90/src/Cleff/Internal/Stack.hs#L133-L137),
 presumably because the vanilla type error from GHC is even worse.
@@ -368,7 +368,7 @@ main =
     . runTeletypeIO
     . runUserStorePureDiscardResult mempty
     . runInteractTeletype
-    $ chat --    chat has type Eff [Interact, UserStore, IOE] ()
+    $ chat --    chat has type Eff '[Interact, UserStore, IOE] ()
 ```
 
 ```
@@ -387,7 +387,7 @@ main =
                     . runUserStorePureDiscardResult mempty . runInteractTeletype
                 $ chat
    |
-13 |     $ chat --    chat has type Eff [Interact, UserStore, IOE] ()
+13 |     $ chat --    chat has type Eff '[Interact, UserStore, IOE] ()
    |       ^^^^
 ```
 

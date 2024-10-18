@@ -28,7 +28,7 @@ effects which do simple, foundational things like "return additional
 side-channel information". You can define additional effects -- some
 examples might be "have access to some settings" or "make HTTP
 requests". With `cleff`, this might be expressed using a type
-signature like `Eff [GetSettings, Http] SomeResult`[*], where
+signature like `Eff '[GetSettings, Http] SomeResult`[*], where
 `GetSettings` and `Http` might be effects that we have designed.
 
 [*] You will instead typically see a type signature that looks more
@@ -230,17 +230,33 @@ f :: Maybe 'True
 This would normally be impossible, because `True` isn't a type, it's a
 value (of a type called `Bool`).
 
+`DataKinds` lets you "promote" values to types using a tick (the `'`
+character). In some circumstances, GHC is smart enough to figure out
+what's going on without the tick, but there is a syntactic ambiguity
+that means that in one specific case, it's required[*], so we will
+endeavor to include it throughout our code here. However, in the wild,
+you may see code where it is left off.
+
 `cleff` uses this in the service of building types that include
 information about all the effects being used by a function. We will be
 modeling each "system" as a `cleff` effect. So if you use an
 `Interact` effect and a `UserStore` effect, your function might be:
 
 ```haskell
-f :: Eff [Interact, UserStore] ()
+f :: Eff '[Interact, UserStore] ()
 ```
 
 Here, we use DataKinds to use a literal list, which would normally
 be a value, at the type level.
+
+[*] We're trying to write code that has a type-level list of elements,
+where each element refers to a single effect. For something like `[]`,
+this is clearly the empty list, and `[Effect1, Effect2]` is clearly a
+type-level list. But writing `[Int]` traditionally means "a list of
+`Int` values". If you want a type-level list containing only a single
+element, you must use the tick to remove the ambiguity. Since this is
+kind of a weird edge case that can produce weird type errors, we
+choose to always use the tick when writing type-level lists.
 
 ### TypeOperators
 

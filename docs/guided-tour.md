@@ -120,7 +120,7 @@ rev = do
 We can mix operations of different effects because they are all
 available. We see from the type signature that `es` must contain
 `Teletype` and `Logging`. `cleff` also provides a shorter way to write
-this: `[Teletype, Logging] :>> es`.
+this: `'[Teletype, Logging] :>> es`.
 
 In `Effects.Teletype` we provide two "interpretations" of the
 effect. One uses IO and works in the way you would expect. The other
@@ -269,20 +269,20 @@ We start with our `readUntilYesOrNo` function. It has the type
 signature `(Teletype :> es) => Eff es Bool`. This says that it has an
 effect type that must have at least the `Teletype` effect, but it's
 polymorphic, so when we use it, we can choose what effects will be
-available. In our test, we will choose `Eff [Teletype] Bool`, which
+available. In our test, we will choose `Eff '[Teletype] Bool`, which
 is the simplest action type that includes `Teletype`. Then, we use our
 `runTeletypePure` function from the `Teletype` module to convert our
-`readUntilYesOrNo` program into `Eff [] (Bool, [String])` -- we
+`readUntilYesOrNo` program into `Eff '[] (Bool, [String])` -- we
 eliminate the `Teletype` effect using the hardcoded inputs of our test
 and by returning the outputs of our action. Then, we convert an `Eff`
-with no effects using `runPure`, converting `Eff [] (Bool, [String])`
+with no effects using `runPure`, converting `Eff '[] (Bool, [String])`
 into `(Bool, [String])`. Finally, we verify those outputs.
 
 This gives us a good sense of what it "feels like" to use `cleff`. We
 have some monadic "program" that uses some effects. We "eliminate"
 each effect in turn, always working on the effect at the front of the
 list, by providing implementations that use simpler
-effects. Eventually we get down to `Eff [] a` or `Eff [IOE] a` and we
+effects. Eventually we get down to `Eff '[] a` or `Eff '[IOE] a` and we
 can eliminate the `Eff` type altogether using `runPure` or `runIOE`.
 
 This test doesn't give us perfect confidence about all of the code
@@ -342,7 +342,7 @@ example, if we have access to `UserStore`, we can retrieve an existing
 user, and potentially handle it differently from a new user:
 
 ```haskell
-chat :: ([Interact, UserStore] :>> es) => Eff es ()
+chat :: ('[Interact, UserStore] :>> es) => Eff es ()
 chat = do
   name <- promptText "What's your name?"
   userM <- lookupUserByName name
@@ -426,13 +426,13 @@ We saw previously that `chat` uses _at least_ `Interact` and
 `UserStore`. But we know we need `IOE` to be the last effect in the
 stack. Fortunately, `chat` is polymorphic in the set of what effects,
 exactly, are present in the stack, so as the caller, we get to choose
-the stack. We can choose `Eff [Interact, UserStore, IOE] ()` without
+the stack. We can choose `Eff '[Interact, UserStore, IOE] ()` without
 loss of generality, because `chat` only needs _at least_ `Interact`
 and `UserStore` and it can ignore `IOE`. Then, elimination functions
 like `runTeletypeIO` can rely on `IOE` still being available.
 
 In `main`, we eliminate `Interact` and `UserStore`, as in our tests,
-and get to `Eff [IOE] ()`, which we can turn into a simple IO action
+and get to `Eff '[IOE] ()`, which we can turn into a simple IO action
 using `runIOE`.
 
 # Conclusion
