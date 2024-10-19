@@ -7,6 +7,34 @@ aren't as confident in Haskell. In this document we will examine some
 of the impacts when using `cleff` as opposed to using other
 approaches.
 
+# GADTs
+
+Using `cleff` necessitates using the `GADTs` extension. However, the
+main thing this introduces is a new syntax. The use of this extension
+is pretty limited in a program that uses `cleff` -- not many people
+are going to be creating effects. (See [architecture](architecture.md)
+for more on this point.) The developer experience impact of this is
+minor, especially if your program is already using GADTs somewhere
+else.
+
+# Type-level lists
+
+Type-level lists are a language feature that's a little fancier. Here
+again, while the use of type-level lists may be confusing, the blast
+radius is pretty small. Most people on your project are not going to
+need to work with type-level lists -- the main use is in
+"interpretation" functions, when you are popping the effect being
+interpreted off the stack.
+
+Both GADTs and type-level lists should be considered in comparison
+with the amount and kind of code that would be necessary to build this
+kind of abstraction boundary without something like `cleff`. The
+obvious alternative is something like MTL. To work effectively with
+MTL, the programmer needs to be comfortable with monad transformers
+(itself a complicated concept) and also be willing to write lots of
+instances to "pass through" behaviors. It's not clear to me that
+type-level lists are that much more fancy.
+
 # Indirection
 
 There is something fundamental about what we are doing which is
