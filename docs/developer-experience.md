@@ -85,14 +85,17 @@ theories:
    directly without having to inject false results into it. Or:
    perhaps we understand that we should have effects at system
    boundaries rather than module or (Java) class boundaries.
-4. Perhaps even in Haskell we run the risk of ending up in the same
+3. Perhaps even in Haskell we run the risk of ending up in the same
    place, and that especially if things feel disconnected in this way,
    it's because we haven't put our abstraction boundaries in the right
    place, and we should revisit them and rearrange them.
+4. Perhaps the tools are even more dangerous in Haskell because they
+   are more ergonomic. Perhaps we run the risk of Enterprise Java™ all
+   the more in Haskell and we need to be extra careful.
 
-So far, I'm taking it on faith that the Enterprise Java™ nightmare
-isn't what awaits us here. In the end, all I know is that we need
-something different from what we have.
+So far, I'm taking it on faith that the Enterprise Java™ nightmare is
+avoidable. In the end, all I know is that we need something different
+from what we have.
 
 # Compiler errors
 
