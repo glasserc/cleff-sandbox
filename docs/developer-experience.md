@@ -118,10 +118,12 @@ I also tried adding an extraneous constraint to the program. When I tried
 This also makes sense and seems reasonable to me.
 
 On the other hand, when I used `:>>`, as in `refreshUserFromInteract
-:: ('[UserStore, Interact] :>> es) => UserRecord -> Eff es UserRecord`,
-GHC didn't complain about this at all. This seems suboptimal. In this
-case, GHC identifies that the constraint is being "used", but it's too
-wide, and GHC is not able to detect that.
+:: ('[UserStore, Interact] :>> es) => UserRecord -> Eff es
+UserRecord`, GHC didn't complain about this at all. This seems
+suboptimal. In this case, GHC identifies that the constraint is being
+"used", but it's too wide, and GHC is not able to detect that. We are
+avoiding `:>>` anyhow (see the sidebar in the [guided
+tour](guided-tour.md), but this is another reason that you might want to avoid it.
 
 ## Interpreter with wrong operations
 

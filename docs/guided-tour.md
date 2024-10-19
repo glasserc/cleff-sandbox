@@ -119,8 +119,7 @@ rev = do
 
 We can mix operations of different effects because they are all
 available. We see from the type signature that `es` must contain
-`Teletype` and `Logging`. `cleff` also provides a shorter way to write
-this: `'[Teletype, Logging] :>> es`.
+`Teletype` and `Logging`.
 
 In `Effects.Teletype` we provide two "interpretations" of the
 effect. One uses IO and works in the way you would expect. The other
@@ -133,6 +132,17 @@ I've modified the definitions from the examples from the `cleff`
 uses effects built-in to `cleff`, namely `Input` and `Output`, to make
 it easy to define alternative implementations, but that can be hard to
 read if you aren't familiar with those effects.
+
+## Sidebar
+
+`cleff` provides an `:>>` operator, which lets us add multiple effects
+-- the above type signature could also be written `'[Teletype,
+Logging] :>> es => Eff es ()`.  However, as of this writing, this has
+a significant impact on compilation times. A similar library,
+`effectful`, removed this operator for this reason. See
+https://github.com/haskell-effectful/effectful/pull/101. As a result,
+we avoid this helper, especially if we are hoping to work in a big
+codebase.
 
 # Interact
 
@@ -342,7 +352,7 @@ example, if we have access to `UserStore`, we can retrieve an existing
 user, and potentially handle it differently from a new user:
 
 ```haskell
-chat :: ('[Interact, UserStore] :>> es) => Eff es ()
+chat :: (Interact :> es, UserStore :> es) => Eff es ()
 chat = do
   name <- promptText "What's your name?"
   userM <- lookupUserByName name
@@ -356,8 +366,7 @@ chat = do
   display $ "It was nice talking to you, " ++ name ++ ". Hope you enjoy your trip!"
 ```
 
-Here we introduce the `:>>` operator, which lets us add multiple
-effects. We can seamlessly use `readUserFromInteract` here, since
+We can seamlessly use `readUserFromInteract` here, since
 `Interact` is definitely present, and `readUserFromInteract` does not
 care about the other effects available. In other words, effects are
 cumulative.
