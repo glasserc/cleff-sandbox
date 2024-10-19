@@ -128,6 +128,10 @@ data Maybe a where
   Just :: a -> Maybe a
 ```
 
+You might observe that the syntax here is much like a normal function
+signature, but for each data constructor. We'll come back to this idea
+in the [guided tour](guided-tour.md).
+
 This syntax is a little clunky for most of the data types we use in
 Haskell, because we end up restating that these constructors all
 produce `Maybe a` in each case. Of course they do, they are all

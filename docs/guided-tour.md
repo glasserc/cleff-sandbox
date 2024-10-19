@@ -20,6 +20,18 @@ To set our new effect up to be used with `cleff`, we run:
 makeEffect ''Logging
 ```
 
+This creates a helper function for each operation in your
+contract. Remember from the [intro](intro.md) that GADT syntax means
+that each constructor of our type gets a type signature -- the
+`makeEffect` function turns these into functions with a similar
+type. We can compare the raw GADT to the helpers that `makeEffect`
+creates for us:
+
+```haskell
+Log ::                  String -> Logging m ()
+log :: Logging :> es => String -> Eff es ()
+```
+
 Once we have this, you can call `log "some string"` as long
 as the `Logging` effect is available. So, we might have this:
 
