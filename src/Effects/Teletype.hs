@@ -55,7 +55,7 @@ runTeletypePure tty =
         . runState []
         . outputToListState
 
-logAllTeletype :: (Log.Logging :> es) => Eff (Teletype : es) a -> Eff (Teletype : es) a
+logAllTeletype :: (Log.Logging :> es, Teletype :> es) => Eff es a -> Eff es a
 logAllTeletype = interpose \case
   ReadTTY -> do
     s <- readTTY
