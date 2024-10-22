@@ -8,6 +8,12 @@ import Effects.Teletype
 
 -- An effect for code that wants to interact with the user through a
 -- text interface.
+--
+-- In a real system, we probably wouldn't have this -- all the
+-- operations could be converted into functions against the `Teletype`
+-- effect -- but we are using this effect here as a demonstration of
+-- what it might look like to build one effect "on top of" another
+-- one. If you have a better idea for an example, let me know!
 data Interact :: Effect where
   PromptText :: String -> Interact m String
   PromptYesOrNo :: String -> Interact m Bool

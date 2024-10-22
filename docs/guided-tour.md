@@ -158,9 +158,12 @@ codebase.
 
 # Interact
 
-We want a higher-level concept for interacting with a user using the
-terminal, which we will call `Interact`. From our architecture diagram
-in the intro, we know that this will build on the simpler interface
+It's typical to compose a big system out of smaller subsystems. I
+wanted to explore that in this project -- what does it look like for
+an effect to be built "out of" another effect? I settled on building a
+higher-level concept for interacting with a user using the terminal,
+which we will call `Interact`. From our architecture diagram in the
+intro, we know that `Interact` will build on the simpler interface
 from `Teletype`. How does this look?
 
 ```haskell
@@ -239,6 +242,22 @@ it's standalone, and because it, too, is defined in terms of an effect
 (in this case, just `Teletype`), then it's straightforward to write
 tests for it. This serves as a helpful segue into our first example of
 testing, which is in `test/Effects/InteractSpec.hs`.
+
+## Sidebar
+
+As an aside, `Interact` doesn't really offer anything that isn't also
+available in `Teletype`, so in a real system you might not want a
+whole new effect for this. Each of these operations could instead be
+standalone functions: `promptText :: (Teletype :> es) => String -> Eff
+es String`, for example. One ancillary advantage is that the
+higher-level effect is easier to write tests for, but it seems like
+this ease might not really be worth additional complexity of having to
+carry another effect around and convert when mixing `Teletype` and
+`Interact`.
+
+Nevertheless, I'm keeping `Interact` around because it helps
+demonstrate what it "looks like" when one effect is built "on top of"
+another -- for pedagogical reasons, in other words.
 
 # Testing: InteractSpec
 

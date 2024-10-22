@@ -88,7 +88,10 @@ The components are:
 - Interact. This system provides higher-level access to a
   terminal. The operations here have semantics that are more clearly
   tied to interacting with a user, with a typical operation being to
-  prompt the user for some input and then to read the input.
+  prompt the user for some input and then to read the input. Even
+  though this system doesn't really add anything (because it can be
+  expressed entirely in terms of Teletype), this lets us explore how
+  systems are built "on top of" other systems.
 
 - UserStore. This system provides a concept of persistence, with
   operations being to look up a user (using their name as the primary
